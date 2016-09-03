@@ -1,8 +1,5 @@
 # Makefile for building the tests for Safe Harbor Server.
 
-SHHOST=52.41.169.7
-SHPORT=6000
-
 PRODUCTNAME=Utilities
 ORG=Scaled Markets
 PACKAGENAME=utilities
