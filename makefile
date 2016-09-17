@@ -1,4 +1,4 @@
-# Makefile for building the tests for Safe Harbor Server.
+# Makefile for building utility packages that are used by Safe Harbor.
 
 PRODUCTNAME=Utilities
 ORG=Scaled Markets
