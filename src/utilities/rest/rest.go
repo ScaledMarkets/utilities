@@ -404,10 +404,6 @@ func ParseResponseBodyToMap(body io.ReadCloser) (map[string]interface{}, error) 
 	var obj map[string]interface{}
 	err = json.Unmarshal(value, &obj)
 	if err != nil { return nil, err }
-	
-	fmt.Println("ParseResponseBodyToMap Map:" + string(value))
-	fmt.Println("endof map")
-	
 	return obj, nil
 }
 

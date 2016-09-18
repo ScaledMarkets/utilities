@@ -3,6 +3,7 @@
 PRODUCTNAME=Utilities
 ORG=Scaled Markets
 PACKAGENAME=utilities
+CPU_ARCH=darwin_amd64
 
 .DELETE_ON_ERROR:
 .ONESHELL:
@@ -17,7 +18,7 @@ CURDIR=$(shell pwd)
 .DEFAULT: all
 
 src_dir = $(CURDIR)/src
-
+pkg_dir = $(CURDIR)/pkg
 build_dir = $(CURDIR)/bin
 
 all: compile
@@ -25,7 +26,13 @@ all: compile
 $(build_dir):
 	mkdir $(build_dir)
 
-compile: $(build_dir)/$(PACKAGENAME)
+compile: $(build_dir) $(src_dir)/$(PACKAGENAME)/*.go
+	GOPATH=$(CURDIR) go install $(PACKAGENAME)
 
-$(build_dir)/$(PACKAGENAME): $(build_dir)
-	@GOPATH=$(CURDIR) go install $(PACKAGENAME)
+$(pkg_dir)/$(CPU_ARCH)/$(PACKAGENAME)/*.a : compile
+
+$(build_dir)/$(PACKAGENAME): compile
+
+clean:
+	rm -r -f $(build_dir)/*
+	rm -r -f $(pkg_dir)/*
