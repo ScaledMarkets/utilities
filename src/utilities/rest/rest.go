@@ -527,11 +527,22 @@ func ParseResponseBodyToPayloadMaps(body io.ReadCloser) ([]map[string]interface{
  * Write the specified map to stdout.
  */
 func PrintMap(m map[string]interface{}) {
-	fmt.Println("Map:")
+	fmt.Println("{")
 	for k, v := range m {
-		fmt.Println(fmt.Sprintf("\"%s\": %x", k, v))
+		fmt.Println(fmt.Sprintf("\t\"%s\": %x", k, v))
 	}
-	fmt.Println("End of map.")
+	fmt.Println("}")
+}
+
+/*******************************************************************************
+ * Write the specified maps to stdout.
+ */
+func PrintMaps(ms []map[string]interface{}) {
+	fmt.Println("[")
+	for _, m := range ms {
+		PrintMap(m)
+	}
+	fmt.Println("]")
 }
 
 /*******************************************************************************
