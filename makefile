@@ -13,7 +13,7 @@ CPU_ARCH=darwin_amd64
 SHELL = /bin/sh
 
 CURDIR=$(shell pwd)
-CPU_ARCH=$(shell uname -s )_amd64
+CPU_ARCH=$(shell uname -s | awk '{print tolower($0)}')_amd64
 
 .PHONY: all compile clean info
 .DEFAULT: all
