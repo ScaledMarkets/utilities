@@ -3,7 +3,6 @@
 PRODUCTNAME=Utilities
 ORG=Scaled Markets
 PACKAGENAME=utilities
-#CPU_ARCH=darwin_amd64
 
 .DELETE_ON_ERROR:
 .ONESHELL:
@@ -13,7 +12,7 @@ PACKAGENAME=utilities
 SHELL = /bin/bash
 
 CURDIR=$(shell pwd)
-CPU_ARCH=$(shell uname -s | tr '[:upper:]' '[:lower:]')_amd64
+CPU_ARCH:=$(shell uname -s | tr '[:upper:]' '[:lower:]')_amd64
 
 .PHONY: all compile clean info
 .DEFAULT: all
