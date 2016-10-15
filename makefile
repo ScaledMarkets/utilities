@@ -13,7 +13,7 @@ PACKAGENAME=utilities
 SHELL = /bin/bash
 
 CURDIR=$(shell pwd)
-CPU_ARCH=$(bash (uname -s | awk '{print tolower($0)}'))_amd64
+CPU_ARCH=$(shell uname -s | awk '{print tolower($0)}')_amd64
 
 .PHONY: all compile clean info
 .DEFAULT: all
