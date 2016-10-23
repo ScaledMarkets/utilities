@@ -528,9 +528,19 @@ func ParseResponseBodyToPayloadMaps(body io.ReadCloser) ([]map[string]interface{
  */
 func PrintMap(m map[string]interface{}) {
 	fmt.Println("{")
+	var firstTime bool = true
 	for k, v := range m {
-		fmt.Println(fmt.Sprintf("\t\"%s\": %x", k, v))
+		if firstTime { firstTime = false } else { fmt.Println(",") }
+		var s string
+		var isString bool
+		s, isString = v.(string)
+		if isString {
+			fmt.Print(fmt.Sprintf("\t\"%s\": \"%s\"", k, s))
+		} else {
+			fmt.Print(fmt.Sprintf("\t\"%s\": %v", k, v))
+		}
 	}
+	fmt.Println()
 	fmt.Println("}")
 }
 
@@ -539,7 +549,8 @@ func PrintMap(m map[string]interface{}) {
  */
 func PrintMaps(ms []map[string]interface{}) {
 	fmt.Println("[")
-	for _, m := range ms {
+	for i, m := range ms {
+		if i > 0 { fmt.Println(",") }
 		PrintMap(m)
 	}
 	fmt.Println("]")
@@ -559,8 +570,6 @@ func (restContext *RestContext) Verify200Response(resp *http.Response) bool {
 		if err == nil { PrintMap(responseMap) }
 		//if restContext.stopOnFirstError { os.Exit(1) }
 	}
-	fmt.Println(fmt.Sprintf(
-		"Response code: %d; status: %s", resp.StatusCode, resp.Status))
 	return is200
 }
 
