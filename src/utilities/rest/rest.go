@@ -26,6 +26,32 @@ type RestContext struct {
 	setSessionId func(request *http.Request, id string)
 }
 
+type ResponseType struct {
+	HTTPStatusCode int
+	HTTPReasonPhrase string
+	ObjectType string
+}
+
+/*******************************************************************************
+ * 
+ */
+type ParameterInfo struct {
+	Name string
+	Description string
+}
+
+func NewParameterInfo(name string, desc string) *ParameterInfo {
+	return &ParameterInfo{
+		Name: name,
+		Description: desc,
+	}
+}
+
+func (parameterInfo *ParameterInfo) AsJSON() string {
+	return fmt.Sprintf(" {\"Name\": \"%s\", \"Description\": \"%s\"}",
+		parameterInfo.Name, parameterInfo.Description)
+}
+
 /*******************************************************************************
  * For TCP/IP. userId and password are optional.
  */
@@ -281,7 +307,7 @@ func (restContext *RestContext) SendBasicStreamReq(method string, reqName string
 func (restContext *RestContext) SendSessionGet(sessionId string, reqName string, names []string,
 	values []string) (*http.Response, error) {
 
-	return restContext.sendSessionReq(sessionId, "GET", reqName, names, values)
+	return restContext.SendSessionReq(sessionId, "GET", reqName, names, values, nil, nil)
 }
 
 /*******************************************************************************
@@ -293,7 +319,7 @@ func (restContext *RestContext) SendSessionGet(sessionId string, reqName string,
 func (restContext *RestContext) SendSessionPost(sessionId string, reqName string, names []string,
 	values []string) (*http.Response, error) {
 
-	return restContext.sendSessionReq(sessionId, "POST", reqName, names, values)
+	return restContext.SendSessionReq(sessionId, "POST", reqName, names, values, nil, nil)
 }
 
 /*******************************************************************************
@@ -301,10 +327,10 @@ func (restContext *RestContext) SendSessionPost(sessionId string, reqName string
  * REST API, as defined in the slides "SafeHarbor REST API" of the design,
  * https://drive.google.com/open?id=1r6Xnfg-XwKvmF4YppEZBcxzLbuqXGAA2YCIiPb_9Wfo
  */
-func (restContext *RestContext) sendSessionReq(sessionId string, reqMethod string,
-	reqName string, names []string, values []string) (*http.Response, error) {
+func (restContext *RestContext) SendSessionReq(sessionId string, reqMethod string,
+	reqName string, names []string, values []string, headerNames []string,
+	headerValues []string) (*http.Response, error) {
 
-	// Send REST POST request to server.
 	var urlstr string = restContext.getURL(true, reqName)
 	var data url.Values = url.Values{}
 	if names != nil {
@@ -317,9 +343,64 @@ func (restContext *RestContext) sendSessionReq(sessionId string, reqMethod strin
 	var err error
 	request, err = http.NewRequest(reqMethod, urlstr, reader)
 	if err != nil { return nil, err }
-	if reqMethod == "POST" {
+	
+	// Set custom headers, if any have been provided.
+	var contentTypeIndex = -1
+	if headerNames != nil {
+		for index, headerName := range headerNames {
+			if headerName == "Content-Type" {
+				contentTypeIndex = index
+			}
+			request.Header.Set(headerName, headerValues[index])
+		}
+	}
+	
+	// For POSTs, if Content-Type not specified, set it to a default type of form-urlencoded.
+	if (reqMethod == "POST") && (contentTypeIndex < 0) {
 		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	}
+	
+	if sessionId != "" {
+		restContext.setSessionId(request, sessionId)
+	}
+	
+	var resp *http.Response
+	resp, err = restContext.httpClient.Do(request)
+	if err != nil { return nil, err }
+	return resp, nil
+}
+
+/*******************************************************************************
+ * 
+ */
+func (restContext *RestContext) SendSessionStreamPost(sessionId string, reqMethod string,
+	reqName string, dataToPost io.Reader, headerNames []string,
+	headerValues []string) (*http.Response, error) {
+	
+	var urlstr string = restContext.getURL(true, reqName)
+	
+	// Add stream to requst.
+	var request *http.Request
+	var err error
+	request, err = http.NewRequest(reqMethod, urlstr, dataToPost)
+	if err != nil { return nil, err }
+	
+	// Set custom headers, if any have been provided.
+	var contentTypeIndex = -1
+	if headerNames != nil {
+		for index, headerName := range headerNames {
+			if headerName == "Content-Type" {
+				contentTypeIndex = index
+			}
+			request.Header.Set(headerName, headerValues[index])
+		}
+	}
+	
+	// For POSTs, if Content-Type not specified, set it to a default type of form-urlencoded.
+	if (reqMethod == "POST") && (contentTypeIndex < 0) {
+		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	}
+	
 	if sessionId != "" {
 		restContext.setSessionId(request, sessionId)
 	}
