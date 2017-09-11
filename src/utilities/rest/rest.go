@@ -26,10 +26,16 @@ type RestContext struct {
 	setSessionId func(request *http.Request, id string)
 }
 
-type ResponseType struct {
+type RestResponseType struct {
 	HTTPStatusCode int
 	HTTPReasonPhrase string
-	ObjectType string
+}
+
+func NewRestResponseType(statusCode int, reason string) *RestResponseType {
+	return &RestResponseType{
+		HTTPStatusCode: statusCode,
+		HTTPReasonPhrase: reason,
+	}
 }
 
 /*******************************************************************************
