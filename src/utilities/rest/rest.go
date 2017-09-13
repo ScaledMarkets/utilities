@@ -38,6 +38,12 @@ func NewRestResponseType(statusCode int, reason string) *RestResponseType {
 	}
 }
 
+func (b *RestResponseType) RestResponseTypeFieldsAsJSON() string {
+	return fmt.Sprintf(
+		"\"HTTPStatusCode\": %d, \"HTTPReasonPhrase\": \"%s\"",
+		b.HTTPStatusCode, EncodeStringForJSON(b.HTTPReasonPhrase))
+}
+
 /*******************************************************************************
  * 
  */
@@ -731,4 +737,11 @@ func ByteArrayAsJSON(bytes []byte) string {
 		s = s + fmt.Sprintf("%d", b)
 	}
 	return (s + "]")
+}
+
+/*******************************************************************************
+ * 
+ */
+func HttpOKResponse() string {
+	return "\"HTTPStatusCode\": 200, \"HTTPReasonPhrase\": \"OK\""
 }
