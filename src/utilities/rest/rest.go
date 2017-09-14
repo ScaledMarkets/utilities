@@ -745,3 +745,19 @@ func ByteArrayAsJSON(bytes []byte) string {
 func HttpOKResponse() string {
 	return "\"HTTPStatusCode\": 200, \"HTTPReasonPhrase\": \"OK\""
 }
+
+/*******************************************************************************
+ * 
+ */
+type ParameterValueDesc struct {
+	Name string
+	StringValue string
+}
+
+func NewParameterValueDesc(name string, strValue string) *ParameterValueDesc {
+	return &ParameterValueDesc{
+		Name: name,
+		//Type: tp,
+		StringValue: strValue,
+	}
+}
