@@ -8,6 +8,6 @@ import (
 
 func main() {
 	// We have to reference the rest package so this will compile.
-	rest.CreateTCPRestContext("", "", 0, "", "",
+	rest.CreateTCPRestContext("", "", 0, "", "", nil,
 		func(*http.Request, string) {})
 }

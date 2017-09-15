@@ -68,11 +68,18 @@ func (parameterInfo *ParameterInfo) AsJSON() string {
  * For TCP/IP. userId and password are optional.
  */
 func CreateTCPRestContext(scheme, hostname string, port int, userId string, password string,
-	sessionIdSetter func(*http.Request, string)) *RestContext {
+	httpTransport *http.Transport, sessionIdSetter func(*http.Request, string)) *RestContext {
+
+	var transport *http.Transport
+	if httpTransport == nil {
+		transport = &http.Transport{}
+	} else {
+		transport = httpTransport
+	}
 
 	return &RestContext{
 		httpClient: &http.Client{
-			//Transport: &http.Transport{},
+			Transport: transport,
 			//CheckRedirect: func(req *http.Request, via []*http.Request) error { return nil },
 		},
 		scheme: scheme,
