@@ -424,6 +424,14 @@ func (restContext *RestContext) SendSessionStreamPost(sessionId string, reqMetho
 		restContext.setSessionId(request, sessionId)
 	}
 	
+	
+	
+	// debug
+	fmt.Print("url=")
+	fmt.Println(request.URL)
+	// end debug
+	
+	
 	var resp *http.Response
 	resp, err = restContext.httpClient.Do(request)
 	if err != nil { return nil, err }
