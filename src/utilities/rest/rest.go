@@ -429,6 +429,12 @@ func (restContext *RestContext) SendSessionStreamPost(sessionId string, reqMetho
 	// debug
 	fmt.Print("url=")
 	fmt.Println(request.URL)
+	fmt.Println(request.Proto)
+	fmt.Println(request.Header)
+	fmt.Println(request.ContentLength)
+	fmt.Println(request.Host)
+	fmt.Println(request.PostForm)
+	
 	// end debug
 	
 	
