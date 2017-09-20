@@ -5,6 +5,7 @@ import (
 	"net/smtp"
 	"math"
 	"reflect"
+	"strconv"
 	
 	// SafeHarbor packages:
 )
@@ -62,6 +63,18 @@ func CreateEmailService(emailConfig map[string]interface{}) (*EmailService, erro
 	var fport float64
 	obj, exists = emailConfig["SES_SMTP_Port"]
 	if ! exists { return nil, ConstructUserError("No SES_SMTP_Port") }
+	
+	var portStr string
+	var isType bool
+	portStr, isType = obj.(string)
+	if ! isType { return nil, ConstructUserError(
+		"SES_SMTP_Port is not a string that represents a number") }
+	
+	var fport int
+	var err error
+	fport, err = strconv.Atoi(portStr)
+	if err != nil { return nil, err }
+	
 	fport, isType = obj.(float64)
 	if ! isType { return nil, ConstructUserError(
 		"SES_SMTP_Port is not a number: it is a " + reflect.TypeOf(obj).String()) }
