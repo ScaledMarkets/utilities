@@ -26,9 +26,9 @@ all: compile
 $(build_dir):
 	mkdir $(build_dir)
 
-compile: $(build_dir) $(src_dir)/$(PACKAGENAME)/*.go
+compile: $(build_dir) $(src_dir)/$(PACKAGENAME)/*.go $(src_dir)/$(PACKAGENAME)/rest/*.go $(src_dir)/$(PACKAGENAME)/utils/*.go
 	@echo "CPU_ARCH=${CPU_ARCH}"
-	GOPATH=$(CURDIR) go install $(PACKAGENAME)
+	GOPATH=$(CURDIR) go install $(PACKAGENAME) $(PACKAGENAME)/rest $(PACKAGENAME)/utils
 
 $(pkg_dir)/$(CPU_ARCH)/$(PACKAGENAME)/*.a : compile
 
